@@ -1,0 +1,6 @@
+{
+    "knee_toe_threshold": 100,
+    "penalty_factor": 0.1,
+    "depth_penalty": 20,
+    "feedback_cooldown": 120
+}

@@ -1,0 +1,35 @@
+{
+    "2025-03-11 19:48:11": {
+        "score": 51.88104561687156,
+        "good_frame_ratio": 0.0,
+        "knee_toe_issues": 575,
+        "spine_issues": 325,
+        "angle_issues": 212
+    },
+    "2025-03-11 19:48:58": {
+        "score": 51.88104561687156,
+        "good_frame_ratio": 0.0,
+        "knee_toe_issues": 575,
+        "spine_issues": 325,
+        "angle_issues": 212
+    },
+    "2025-03-11 19:54:42": {
+        "score": 56.99010594728374,
+        "good_frame_ratio": 0.0,
+        "knee_toe_issues": 575,
+        "spine_issues": 325,
+        "angle_issues": 212
+    },
+    "2025-03-11 20:00:30": {
+        "score": 78.29184471939212,
+        "good_frame_ratio": 100.0,
+        "knee_toe_issues": 571,
+        "depth_issues": 575
+    },
+    "2025-03-14 14:15:58": {
+        "score": 78.29159810239496,
+        "good_frame_ratio": 100.0,
+        "knee_toe_issues": 570,
+        "depth_issues": 575
+    }
+}
