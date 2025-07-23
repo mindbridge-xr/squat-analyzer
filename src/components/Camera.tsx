@@ -50,12 +50,12 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
 
           if (results.poseLandmarks) {
             drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
-              color: '#00FF00',
-              lineWidth: 2
+              color: '#2E8B57',
+              lineWidth: 3
             });
             drawLandmarks(canvasCtx, results.poseLandmarks, {
-              color: '#FF0000',
-              lineWidth: 1,
+              color: '#32CD32',
+              lineWidth: 2,
               radius: 3
             });
           }
