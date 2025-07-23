@@ -66,19 +66,14 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
           }
               // Draw pose connections with sports green color
         });
-                color: '#2E8B57',
-                lineWidth: 3
 
-              
-              // Draw landmarks with accent color
+        poseRef.current = pose;
+
         // Initialize camera
-                color: '#32CD32',
-                lineWidth: 2,
-                radius: 4
+        const camera = new CameraUtils(videoRef.current, {
+          onFrame: async () => {
+            if (poseRef.current && videoRef.current) {
               await poseRef.current.send({ image: videoRef.current });
-              
-              // Draw joint angle overlays
-              drawJointAngles(canvasCtx, results.poseLandmarks);
             }
           },
           width: 640,
@@ -95,71 +90,71 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
         setIsLoading(false);
       }
     };
-      // Function to draw joint angle overlays
-      const drawJointAngles = (ctx: CanvasRenderingContext2D, landmarks: any[]) => {
-        const joints = [
-          { name: 'L_KNEE', index: 25, angle: calculateKneeAngle(landmarks, 'left') },
-          { name: 'R_KNEE', index: 26, angle: calculateKneeAngle(landmarks, 'right') },
-          { name: 'L_HIP', index: 23, angle: calculateHipAngle(landmarks, 'left') },
-          { name: 'R_HIP', index: 24, angle: calculateHipAngle(landmarks, 'right') }
-        ];
 
-        joints.forEach(joint => {
-          if (landmarks[joint.index] && joint.angle) {
-            const x = landmarks[joint.index].x * ctx.canvas.width;
-            const y = landmarks[joint.index].y * ctx.canvas.height;
-            
-            // Draw semi-transparent circle
-            ctx.beginPath();
-            ctx.arc(x, y, 25, 0, 2 * Math.PI);
-            ctx.fillStyle = 'rgba(46, 139, 87, 0.7)';
-            ctx.fill();
-            ctx.strokeStyle = '#32CD32';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Draw angle text
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.fillRect(x - 20, y - 8, 40, 16);
-            ctx.fillStyle = '#1F2937';
-            ctx.font = 'bold 12px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${Math.round(joint.angle)}°`, x, y + 4);
-          }
-        });
-      };
+    // Function to draw joint angle overlays
+    const drawJointAngles = (ctx: CanvasRenderingContext2D, landmarks: any[]) => {
+      const joints = [
+        { name: 'L_KNEE', index: 25, angle: calculateKneeAngle(landmarks, 'left') },
+        { name: 'R_KNEE', index: 26, angle: calculateKneeAngle(landmarks, 'right') },
+        { name: 'L_HIP', index: 23, angle: calculateHipAngle(landmarks, 'left') },
+        { name: 'R_HIP', index: 24, angle: calculateHipAngle(landmarks, 'right') }
+      ];
 
-      const calculateKneeAngle = (landmarks: any[], side: 'left' | 'right') => {
-        const hipIndex = side === 'left' ? 23 : 24;
-        const kneeIndex = side === 'left' ? 25 : 26;
-        const ankleIndex = side === 'left' ? 27 : 28;
-        
-        if (landmarks[hipIndex] && landmarks[kneeIndex] && landmarks[ankleIndex]) {
-          return calculateAngle(landmarks[hipIndex], landmarks[kneeIndex], landmarks[ankleIndex]);
+      joints.forEach(joint => {
+        if (landmarks[joint.index] && joint.angle) {
+          const x = landmarks[joint.index].x * ctx.canvas.width;
+          const y = landmarks[joint.index].y * ctx.canvas.height;
+          
+          // Draw semi-transparent circle
+          ctx.beginPath();
+          ctx.arc(x, y, 25, 0, 2 * Math.PI);
+          ctx.fillStyle = 'rgba(46, 139, 87, 0.7)';
+          ctx.fill();
+          ctx.strokeStyle = '#32CD32';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          // Draw angle text
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.fillRect(x - 20, y - 8, 40, 16);
+          ctx.fillStyle = '#1F2937';
+          ctx.font = 'bold 12px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText(`${Math.round(joint.angle)}°`, x, y + 4);
         }
-        return null;
-      };
+      });
+    };
 
-      const calculateHipAngle = (landmarks: any[], side: 'left' | 'right') => {
-        const shoulderIndex = side === 'left' ? 11 : 12;
-        const hipIndex = side === 'left' ? 23 : 24;
-        const kneeIndex = side === 'left' ? 25 : 26;
-        
-        if (landmarks[shoulderIndex] && landmarks[hipIndex] && landmarks[kneeIndex]) {
-          return calculateAngle(landmarks[shoulderIndex], landmarks[hipIndex], landmarks[kneeIndex]);
-        }
-        return null;
-      };
+    const calculateKneeAngle = (landmarks: any[], side: 'left' | 'right') => {
+      const hipIndex = side === 'left' ? 23 : 24;
+      const kneeIndex = side === 'left' ? 25 : 26;
+      const ankleIndex = side === 'left' ? 27 : 28;
+      
+      if (landmarks[hipIndex] && landmarks[kneeIndex] && landmarks[ankleIndex]) {
+        return calculateAngle(landmarks[hipIndex], landmarks[kneeIndex], landmarks[ankleIndex]);
+      }
+      return null;
+    };
 
-      const calculateAngle = (a: any, b: any, c: any) => {
-        const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
-        let angle = Math.abs(radians * 180.0 / Math.PI);
-        if (angle > 180.0) {
-          angle = 360 - angle;
-        }
-        return angle;
-      };
+    const calculateHipAngle = (landmarks: any[], side: 'left' | 'right') => {
+      const shoulderIndex = side === 'left' ? 11 : 12;
+      const hipIndex = side === 'left' ? 23 : 24;
+      const kneeIndex = side === 'left' ? 25 : 26;
+      
+      if (landmarks[shoulderIndex] && landmarks[hipIndex] && landmarks[kneeIndex]) {
+        return calculateAngle(landmarks[shoulderIndex], landmarks[hipIndex], landmarks[kneeIndex]);
+      }
+      return null;
+    };
 
+    const calculateAngle = (a: any, b: any, c: any) => {
+      const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+      let angle = Math.abs(radians * 180.0 / Math.PI);
+      if (angle > 180.0) {
+        angle = 360 - angle;
+      }
+      return angle;
+    };
 
     initializeCamera();
 
@@ -177,6 +172,7 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
   useEffect(() => {
     // This effect handles the analysis state change
   }, [isAnalyzing, onPoseResults]);
+
   if (error) {
     return (
       <div className="flex items-center justify-center h-96 bg-gradient-to-br from-red-50 to-red-100 rounded-xl border-2 border-red-200">
