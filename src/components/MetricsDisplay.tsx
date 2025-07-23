@@ -21,15 +21,15 @@ export const MetricsDisplay: React.FC<MetricsDisplayProps> = ({
   currentPhase 
 }) => {
   const getScoreColor = (score: number): string => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return 'metric-good';
+    if (score >= 60) return 'metric-warning';
+    return 'metric-danger';
   };
 
   const getScoreIcon = (score: number) => {
-    if (score >= 80) return <TrendingUp className="w-4 h-4 text-green-600" />;
-    if (score >= 60) return <Minus className="w-4 h-4 text-yellow-600" />;
-    return <TrendingDown className="w-4 h-4 text-red-600" />;
+    if (score >= 80) return <TrendingUp className="w-5 h-5 text-green-600" />;
+    if (score >= 60) return <Minus className="w-5 h-5 text-yellow-500" />;
+    return <TrendingDown className="w-5 h-5 text-red-600" />;
   };
 
   const calculateFormScore = (metrics: SquatMetrics): number => {
@@ -60,27 +60,32 @@ export const MetricsDisplay: React.FC<MetricsDisplayProps> = ({
 
   const getPhaseColor = (phase: string): string => {
     switch (phase) {
-      case 'descending': return 'text-blue-600';
-      case 'bottom': return 'text-purple-600';
-      case 'ascending': return 'text-green-600';
-      default: return 'text-gray-600';
+      case 'descending': return 'phase-descending';
+      case 'bottom': return 'phase-bottom';
+      case 'ascending': return 'phase-ascending';
+      default: return 'phase-standing';
     }
   };
 
   const getPhaseIcon = (phase: string): string => {
     switch (phase) {
-      case 'descending': return '↓';
-      case 'bottom': return '⏸';
-      case 'ascending': return '↑';
-      default: return '⏹';
+      case 'descending': return '⬇️';
+      case 'bottom': return '⏸️';
+      case 'ascending': return '⬆️';
+      default: return '⏹️';
     }
   };
 
   if (!metrics) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Form Analysis</h3>
-        <p className="text-gray-500">Stand in front of the camera to begin analysis</p>
+      <div className="sports-card p-6">
+        <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center">
+          📊 Form Analysis
+        </h3>
+        <div className="text-center py-8">
+          <div className="text-6xl mb-4">🏃‍♂️</div>
+          <p className="text-slate-500 font-medium">Stand in front of the camera to begin analysis</p>
+        </div>
       </div>
     );
   }
@@ -88,69 +93,93 @@ export const MetricsDisplay: React.FC<MetricsDisplayProps> = ({
   const formScore = calculateFormScore(metrics);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg space-y-4">
+    <div className="sports-card p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">Form Analysis</h3>
-        <div className="flex items-center space-x-2">
+        <h3 className="text-xl font-bold text-slate-800 flex items-center">
+          📊 Form Analysis
+        </h3>
+        <div className="flex items-center space-x-3">
           {getScoreIcon(formScore)}
-          <span className={`text-2xl font-bold ${getScoreColor(formScore)}`}>
+          <span className={`text-3xl font-black ${getScoreColor(formScore)}`}>
             {formScore}
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-gray-50 p-3 rounded">
-          <div className="text-sm text-gray-600">Squat Count</div>
-          <div className="text-xl font-bold text-blue-600">{squatCount}</div>
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+          <div className="text-sm font-semibold text-slate-600 mb-1">🏋️ Squat Count</div>
+          <div className="text-2xl font-black text-blue-600">{squatCount}</div>
         </div>
-        <div className="bg-gray-50 p-3 rounded">
-          <div className="text-sm text-gray-600">Phase</div>
-          <div className={`text-lg font-semibold ${getPhaseColor(currentPhase)}`}>
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-xl border border-slate-200">
+          <div className="text-sm font-semibold text-slate-600 mb-1">⚡ Phase</div>
+          <div className={`text-lg font-bold ${getPhaseColor(currentPhase)} capitalize`}>
             {getPhaseIcon(currentPhase)} {currentPhase}
           </div>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Knee Angle</span>
-          <span className="font-medium">{Math.round(metrics.kneeAngle)}°</span>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+          <span className="text-sm font-semibold text-slate-700">🦵 Knee Angle</span>
+          <span className="font-bold text-lg text-slate-800">{Math.round(metrics.kneeAngle)}°</span>
         </div>
         
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Hip Angle</span>
-          <span className="font-medium">{Math.round(metrics.hipAngle)}°</span>
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+          <span className="text-sm font-semibold text-slate-700">🍑 Hip Angle</span>
+          <span className="font-bold text-lg text-slate-800">{Math.round(metrics.hipAngle)}°</span>
         </div>
         
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Squat Depth</span>
-          <span className="font-medium">{(metrics.squatDepth * 100).toFixed(1)}%</span>
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+          <span className="text-sm font-semibold text-slate-700">📏 Squat Depth</span>
+          <span className="font-bold text-lg text-slate-800">{(metrics.squatDepth * 100).toFixed(1)}%</span>
         </div>
         
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Knee Alignment</span>
-          <span className={`font-medium ${metrics.kneeAlignment < 0.1 ? 'text-green-600' : 'text-red-600'}`}>
-            {metrics.kneeAlignment < 0.1 ? 'Good' : 'Needs Work'}
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+          <span className="text-sm font-semibold text-slate-700">🎯 Knee Alignment</span>
+          <span className={`font-bold text-lg ${metrics.kneeAlignment < 0.1 ? 'metric-good' : 'metric-danger'}`}>
+            {metrics.kneeAlignment < 0.1 ? '✅ Good' : '⚠️ Needs Work'}
           </span>
         </div>
         
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Back Position</span>
-          <span className={`font-medium ${metrics.backStraightness < 0.1 ? 'text-green-600' : 'text-red-600'}`}>
-            {metrics.backStraightness < 0.1 ? 'Straight' : 'Leaning'}
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+          <span className="text-sm font-semibold text-slate-700">🏃 Back Position</span>
+          <span className={`font-bold text-lg ${metrics.backStraightness < 0.1 ? 'metric-good' : 'metric-danger'}`}>
+            {metrics.backStraightness < 0.1 ? '✅ Straight' : '⚠️ Leaning'}
           </span>
         </div>
       </div>
 
       {formScore < 70 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
-          <h4 className="text-sm font-medium text-yellow-800 mb-1">Form Tips:</h4>
-          <ul className="text-xs text-yellow-700 space-y-1">
-            {metrics.kneeAngle < 80 && <li>• Go deeper - aim for 90° knee angle</li>}
-            {metrics.kneeAngle > 100 && <li>• Don't go too deep - maintain control</li>}
-            {metrics.kneeAlignment > 0.1 && <li>• Keep knees aligned over toes</li>}
-            {metrics.backStraightness > 0.1 && <li>• Keep your back straight and chest up</li>}
+        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-4">
+          <h4 className="text-lg font-bold text-orange-800 mb-3 flex items-center">
+            💪 Form Tips:
+          </h4>
+          <ul className="text-sm font-medium text-orange-700 space-y-2">
+            {metrics.kneeAngle < 80 && (
+              <li className="flex items-center">
+                <span className="text-orange-500 mr-2">🔽</span>
+                Go deeper - aim for 90° knee angle
+              </li>
+            )}
+            {metrics.kneeAngle > 100 && (
+              <li className="flex items-center">
+                <span className="text-orange-500 mr-2">🔼</span>
+                Don't go too deep - maintain control
+              </li>
+            )}
+            {metrics.kneeAlignment > 0.1 && (
+              <li className="flex items-center">
+                <span className="text-orange-500 mr-2">🎯</span>
+                Keep knees aligned over toes
+              </li>
+            )}
+            {metrics.backStraightness > 0.1 && (
+              <li className="flex items-center">
+                <span className="text-orange-500 mr-2">📐</span>
+                Keep your back straight and chest up
+              </li>
+            )}
           </ul>
         </div>
       )}
