@@ -25,7 +25,9 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
         // Initialize MediaPipe Pose
         const pose = new Pose({
           locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`;
+            // Extract filename from path to handle cases where MediaPipe requests 'data/file.data'
+            const filename = file.split('/').pop();
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${filename}`;
           }
         });
 
