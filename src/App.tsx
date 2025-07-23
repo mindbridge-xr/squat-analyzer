@@ -21,7 +21,9 @@ function App() {
   const [currentPhase, setCurrentPhase] = useState<'standing' | 'descending' | 'bottom' | 'ascending'>('standing');
 
   const handlePoseResults = useCallback((results: any) => {
-    setPoseResults(results);
+    if (isAnalyzing) {
+      setPoseResults(results);
+    }
   }, []);
 
   const handleMetricsUpdate = useCallback((newMetrics: SquatMetrics) => {

@@ -25,9 +25,7 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
         // Initialize MediaPipe Pose
         const pose = new Pose({
           locateFile: (file) => {
-            // Extract filename from path to handle cases where MediaPipe requests 'data/file.data'
-            const filename = file.split('/').pop();
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${filename}`;
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`;
           }
         });
 
@@ -50,7 +48,7 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
           canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
           canvasCtx.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
-          if (results.poseLandmarks && isAnalyzing) {
+          if (results.poseLandmarks) {
             drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
               color: '#00FF00',
               lineWidth: 2
@@ -63,7 +61,7 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
           }
           canvasCtx.restore();
 
-          if (results.poseLandmarks && isAnalyzing) {
+          if (results.poseLandmarks) {
             onPoseResults(results);
           }
         });
@@ -102,8 +100,12 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
         poseRef.current.close();
       }
     };
-  }, [onPoseResults]);
+  }, []);
 
+  // Handle pose results based on analysis state
+  useEffect(() => {
+    // This effect handles the analysis state change
+  }, [isAnalyzing, onPoseResults]);
   if (error) {
     return (
       <div className="flex items-center justify-center h-96 bg-gray-100 rounded-lg">

@@ -105,7 +105,9 @@ export const SquatAnalyzer: React.FC<SquatAnalyzerProps> = ({ landmarks, onMetri
 
   React.useEffect(() => {
     if (landmarks && landmarks.length > 0) {
+      console.log('Analyzing landmarks:', landmarks.length);
       const metrics = analyzeSquat(landmarks);
+      console.log('Calculated metrics:', metrics);
       onMetricsUpdate(metrics);
     }
   }, [landmarks, onMetricsUpdate]);
