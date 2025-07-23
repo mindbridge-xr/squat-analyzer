@@ -7,6 +7,8 @@ import { POSE_CONNECTIONS } from '@mediapipe/pose';
 interface CameraProps {
   onPoseResults: (results: any) => void;
   isAnalyzing: boolean;
+  videoElement?: HTMLVideoElement | null;
+  inputMode: 'webcam' | 'video';
 }
 
 export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) => {
@@ -196,15 +198,19 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl z-10">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-green-600 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-slate-700 font-semibold">🚀 Initializing AI Motion Tracking...</p>
+            <p className="text-slate-700 font-semibold">
+              🚀 Initializing AI Motion Tracking for {inputMode === 'webcam' ? 'Webcam' : 'Video'}...
+            </p>
           </div>
         </div>
       )}
-      <video
-        ref={videoRef}
-        className="hidden"
-        playsInline
-      />
+      {inputMode === 'webcam' && (
+        <video
+          ref={videoRef}
+          className="hidden"
+          playsInline
+        />
+      )}
       <canvas
         ref={canvasRef}
         width={640}

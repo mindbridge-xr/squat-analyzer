@@ -38,6 +38,25 @@ function App() {
     setCurrentPhase(phase);
   }, []);
 
+  const handleVideoSelect = useCallback((video: HTMLVideoElement) => {
+    setSelectedVideo(video);
+    setInputMode('video');
+  }, []);
+
+  const handleVideoRemove = useCallback(() => {
+    setSelectedVideo(null);
+    setInputMode('webcam');
+    setIsAnalyzing(false);
+  }, []);
+
+  const handleModeSwitch = (mode: 'webcam' | 'video') => {
+    setInputMode(mode);
+    setIsAnalyzing(false);
+    if (mode === 'webcam') {
+      setSelectedVideo(null);
+    }
+  };
+
   const resetCounter = () => {
     setSquatCount(0);
     setCurrentPhase('standing');
@@ -54,17 +73,54 @@ function App() {
             🏋️ Real-time squat form analysis using AI pose detection
           </p>
           
+          {/* Input Mode Selection */}
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            <button
+              onClick={() => handleModeSwitch('webcam')}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
+                inputMode === 'webcam' 
+                  ? 'btn-sports-primary' 
+                  : 'btn-sports-secondary'
+              }`}
+            >
+              <CameraIcon className="w-5 h-5" />
+              <span>Webcam</span>
+            </button>
+            
+            <button
+              onClick={() => handleModeSwitch('video')}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
+                inputMode === 'video' 
+                  ? 'btn-sports-primary' 
+                  : 'btn-sports-secondary'
+              }`}
+            >
+              <Video className="w-5 h-5" />
+              <span>Upload Video</span>
+            </button>
+          </div>
+          
           <div className="flex items-center justify-center space-x-4">
             <button
               onClick={() => setIsAnalyzing(!isAnalyzing)}
+             disabled={inputMode === 'video' && !selectedVideo}
               className={`flex items-center space-x-3 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
-                isAnalyzing 
+               isAnalyzing 
                   ? 'btn-sports-danger' 
-                  : 'btn-sports-primary'
+                 : (inputMode === 'video' && !selectedVideo) 
+                   ? 'btn-sports-secondary opacity-50 cursor-not-allowed'
+                   : 'btn-sports-primary'
               }`}
             >
               {isAnalyzing ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-              <span>{isAnalyzing ? 'Stop Workout' : 'Start Workout'}</span>
+             <span>
+               {isAnalyzing 
+                 ? 'Stop Analysis' 
+                 : inputMode === 'video' && !selectedVideo
+                   ? 'Select Video First'
+                   : 'Start Analysis'
+               }
+             </span>
             </button>
             
             <button
@@ -80,15 +136,42 @@ function App() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Camera Feed */}
           <div className="lg:col-span-2">
-            <div className="sports-card p-6">
-              <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center">
-                📹 Live Motion Tracking
-              </h2>
-              <Camera 
-                onPoseResults={handlePoseResults}
-                isAnalyzing={isAnalyzing}
-              />
-            </div>
+            {inputMode === 'video' && !selectedVideo ? (
+              <div className="sports-card p-6">
+                <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center">
+                  🎥 Video Analysis Mode
+                </h2>
+                <VideoUpload 
+                  onVideoSelect={handleVideoSelect}
+                  onVideoRemove={handleVideoRemove}
+                  isAnalyzing={isAnalyzing}
+                />
+              </div>
+            ) : (
+              <div className="sports-card p-6">
+                <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center">
+                  {inputMode === 'webcam' ? '📹 Live Motion Tracking' : '🎥 Video Motion Tracking'}
+                </h2>
+                <Camera 
+                  onPoseResults={handlePoseResults}
+                  isAnalyzing={isAnalyzing}
+                  videoElement={selectedVideo}
+                  inputMode={inputMode}
+                />
+                {inputMode === 'video' && selectedVideo && (
+                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm font-medium text-blue-800 mb-2">
+                      💡 Video Analysis Tips:
+                    </p>
+                    <ul className="text-xs text-blue-700 space-y-1">
+                      <li>• Use the video controls to play, pause, and seek</li>
+                      <li>• Analysis works in real-time as the video plays</li>
+                      <li>• Best results with clear, full-body footage</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Metrics Panel */}
@@ -107,7 +190,7 @@ function App() {
                 <ul className="text-sm text-slate-700 space-y-3 font-medium">
                   <li className="flex items-center">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
-                    Stand facing the camera
+                    {inputMode === 'webcam' ? 'Stand facing the camera' : 'Ensure person faces the camera in video'}
                   </li>
                   <li className="flex items-center">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
@@ -115,7 +198,7 @@ function App() {
                   </li>
                   <li className="flex items-center">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
-                    Perform controlled movements
+                    {inputMode === 'webcam' ? 'Perform controlled movements' : 'Video should show controlled movements'}
                   </li>
                   <li className="flex items-center">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
