@@ -10,18 +10,17 @@ interface SquatMetrics {
 
 interface SquatCounterProps {
   metrics: SquatMetrics | null;
-  currentPhase: 'standing' | 'descending' | 'bottom' | 'ascending';
   onSquatComplete: (count: number) => void;
   onPhaseChange: (phase: 'standing' | 'descending' | 'bottom' | 'ascending') => void;
 }
 
 export const SquatCounter: React.FC<SquatCounterProps> = ({ 
   metrics, 
-  currentPhase,
   onSquatComplete, 
   onPhaseChange 
 }) => {
   const [squatCount, setSquatCount] = useState(0);
+  const [currentPhase, setCurrentPhase] = useState<'standing' | 'descending' | 'bottom' | 'ascending'>('standing');
   const [previousKneeAngle, setPreviousKneeAngle] = useState<number | null>(null);
   const [bottomReached, setBottomReached] = useState(false);
 
@@ -68,6 +67,7 @@ export const SquatCounter: React.FC<SquatCounterProps> = ({
 
     // Only call onPhaseChange if phase actually changed
     if (newPhase !== currentPhase) {
+      setCurrentPhase(newPhase);
       onPhaseChange(newPhase);
     }
 

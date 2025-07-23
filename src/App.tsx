@@ -116,7 +116,6 @@ function App() {
         />
         <SquatCounter 
           metrics={metrics}
-          currentPhase={currentPhase}
           onSquatComplete={handleSquatComplete}
           onPhaseChange={handlePhaseChange}
         />

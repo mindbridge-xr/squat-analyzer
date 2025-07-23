@@ -63,7 +63,7 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
           }
           canvasCtx.restore();
 
-          if (results.poseLandmarks) {
+          if (results.poseLandmarks && isAnalyzing) {
             onPoseResults(results);
           }
         });
@@ -98,8 +98,11 @@ export const Camera: React.FC<CameraProps> = ({ onPoseResults, isAnalyzing }) =>
       if (cameraRef.current) {
         cameraRef.current.stop();
       }
+      if (poseRef.current) {
+        poseRef.current.close();
+      }
     };
-  }, [onPoseResults, isAnalyzing]);
+  }, [onPoseResults]);
 
   if (error) {
     return (
