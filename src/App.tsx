@@ -123,14 +123,5 @@ function App() {
     </div>
   );
 }
-          Squat Form Analyzer
-        </h1>
-        <p className="text-gray-600">
-          Real-time squat form analysis coming soon...
-        </p>
-      </div>
-    </div>
-  )
-}
 
-export default App
+export default App;
